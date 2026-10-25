@@ -1,0 +1,30 @@
+name: Healthcheck
+
+on:
+  schedule:
+    - cron: '20 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  healthcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Health check live site
+        run: node scripts/healthcheck.mjs
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+      - name: Alert on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          OPEN=$(gh issue list --search "🚨 in:title" --state open --json number --jq length)
+          if [ "${OPEN:-0}" = "0" ]; then
+            gh issue create --title "🚨 healthcheck failed — $(date -u '+%F %T') UTC" \
+              --body "自动告警:${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
+          fi

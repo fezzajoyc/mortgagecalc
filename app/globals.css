@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* 站点皮肤:金融深蓝(站群第十一皮肤) */
+:root {
+  --background: #f8fafb;
+  --foreground: #101826;
+  --brand: #1a5fb4;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-ink: var(--foreground);
+  --color-brand: var(--brand);
+  --font-sans: ui-sans-serif, -apple-system, "SF Pro Text", "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+body { background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
